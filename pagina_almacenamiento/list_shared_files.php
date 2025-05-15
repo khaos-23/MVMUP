@@ -16,7 +16,7 @@ if (empty($path)) {
 $base_directory = realpath("/mvmup_stor");
 $full_path = realpath($base_directory . '/' . ltrim($path, '/'));
 
-// Validar que la ruta esté dentro del directorio base
+// Validar que la ruta sea válida y esté dentro del directorio base
 if (!$full_path || strpos($full_path, $base_directory) !== 0) {
     die(json_encode(["error" => "No tienes permiso para acceder a esta carpeta."]));
 }
@@ -26,7 +26,7 @@ $stmt->bind_param("is", $user_id, $full_path);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows === 0 || !$full_path || strpos($full_path, $base_directory) !== 0) {
+if ($result->num_rows === 0) {
     die(json_encode(["error" => "No tienes permiso para acceder a esta carpeta."]));
 }
 

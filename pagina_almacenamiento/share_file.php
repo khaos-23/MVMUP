@@ -14,8 +14,9 @@ if (isset($data['file'], $data['recipient'])) {
     $full_path = realpath($base_directory . '/' . ltrim($file, '/'));
 
     
-    if (!$full_path || strpos($full_path, $base_directory) !== 0) {
-        exit(json_encode(["error" => "Ruta inválida."]));
+    if (!$full_path || strpos($full_path, realpath($base_directory)) !== 0) {
+        
+        exit;
     }
 
     
