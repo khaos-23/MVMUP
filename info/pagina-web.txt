@@ -1,4 +1,4 @@
-ruta en archivos compartido: comienza desde la raíz y no depende del ID del usuario
+ruta en archivos compartido
 
 mensaje de creacion de carpeta
 10=2,5
