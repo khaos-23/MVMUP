@@ -183,9 +183,12 @@ function shareItem(itemPath, isFolder) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ file: itemPath, recipient, isFolder })
   })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message || 'Elemento compartido con éxito.');
+    .then(response => {
+      if (response.redirected) {
+        window.location.href = response.url; // Redirigir para mostrar el mensaje
+      } else {
+        return response.json();
+      }
     })
     .catch(error => console.error('Error al compartir el elemento:', error));
 }
