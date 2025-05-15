@@ -45,9 +45,9 @@ if (isset($data['file'], $data['recipient'])) {
         $stmt->bind_param("iis", $id, $recipientId, $full_path);
 
         if ($stmt->execute()) {
-            echo json_encode(['message' => 'Archivo o carpeta compartida con éxito']);
+            header("Location: /pagina_almacenamiento/index.html?message=Archivo o carpeta compartida con éxito&type=success");
         } else {
-            echo json_encode(['message' => 'Error al compartir el archivo o carpeta']);
+            header("Location: /pagina_almacenamiento/index.html?message=Error al compartir el archivo o carpeta&type=error");
         }
     } else {
         echo json_encode(['message' => 'No tienes permiso para compartir este archivo o carpeta']);

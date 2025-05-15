@@ -66,9 +66,9 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
     }
 
     if (deleteFolderRecursively($full_path, $conn, $id)) {
-        echo json_encode(['success' => true]);
+        header("Location: /pagina_almacenamiento/index.html?message=Archivo o carpeta eliminados con éxito&type=success");
     } else {
-        echo json_encode(['success' => false, 'error' => 'No se pudo eliminar el archivo o carpeta.']);
+        header("Location: /pagina_almacenamiento/index.html?message=No se pudo eliminar el archivo o carpeta&type=error");
     }
 } else {
     echo json_encode(['success' => false, 'error' => 'No tienes permiso para eliminar este archivo o carpeta.']);

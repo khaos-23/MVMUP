@@ -15,12 +15,12 @@ if (isset($data['folder'])) {
 
     if (!file_exists($folder)) {
         if (mkdir($folder, 0775, true)) {
-            echo json_encode(['success' => true]);
+            header("Location: /pagina_almacenamiento/index.html?message=Carpeta creada con éxito&type=success");
         } else {
-            echo json_encode(['error' => 'No se pudo crear la carpeta']);
+            header("Location: /pagina_almacenamiento/index.html?message=No se pudo crear la carpeta&type=error");
         }
     } else {
-        echo json_encode(['error' => 'La carpeta ya existe']);
+        header("Location: /pagina_almacenamiento/index.html?message=La carpeta ya existe&type=error");
     }
 }
 ?>
