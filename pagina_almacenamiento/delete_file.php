@@ -69,9 +69,9 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
     }
 
     if (deleteFolderRecursively($full_path, $conn, $id)) {
-        // Mensaje ya manejado dentro de la función
+        echo json_encode(["success" => true, "message" => "Archivo o carpeta eliminados con éxito."]);
     } else {
-        header("Location: /pagina_almacenamiento/index.html?message=Error desconocido&type=error");
+        echo json_encode(["success" => false, "message" => "Error desconocido."]);
     }
 } else {
     header("Location: /pagina_almacenamiento/index.html?message=Archivo o carpeta no encontrado&type=error");
