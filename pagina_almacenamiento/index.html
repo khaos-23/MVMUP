@@ -128,8 +128,13 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                  <input type="email" id="recipientEmail" class="form-control" placeholder="Email del destinatario">
-                  <button onclick="confirmShare()" class="btn btn-primary mt-2">Compartir</button>
+                  <form id="shareFileForm">
+                      <div class="mb-3">
+                          <label for="recipientEmail" class="form-label">Email del destinatario</label>
+                          <input type="email" id="recipientEmail" class="form-control" placeholder="Email del destinatario" required>
+                      </div>
+                      <button type="button" class="btn btn-primary mt-2" onclick="confirmShare()">Compartir</button>
+                  </form>
               </div>
           </div>
       </div>
