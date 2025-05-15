@@ -41,6 +41,17 @@ if (isset($data['file'], $data['recipient'])) {
         $recipientId = $recipientRow['id'];
 
         
+        $stmt = $conn->prepare("SELECT * FROM shared_files WHERE owner_id = ? AND shared_with_id = ? AND file_path = ?");
+        $stmt->bind_param("iis", $id, $recipientId, $full_path);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            header("Location: /pagina_almacenamiento/index.html?message=El archivo ya ha sido compartido con esta persona&type=error");
+            exit;
+        }
+
+        
         $stmt = $conn->prepare("INSERT INTO shared_files (owner_id, shared_with_id, file_path) VALUES (?, ?, ?)");
         $stmt->bind_param("iis", $id, $recipientId, $full_path);
 
