@@ -33,7 +33,7 @@ if (isset($data['file'], $data['recipient'])) {
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            
+            header("Location: /pagina_almacenamiento/index.html?message=Destinatario no encontrado&type=error");
             exit;
         }
 
