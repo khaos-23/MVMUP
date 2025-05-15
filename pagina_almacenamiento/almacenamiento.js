@@ -240,12 +240,28 @@ function createFolder() {
     .then(data => {
       if (data.success) {
         loadLocalFiles();
-        alert('Carpeta creada con éxito');
+        const messageContainer = document.getElementById('messageContainer');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.role = 'alert';
+        alertDiv.innerHTML = `
+          Carpeta creada con éxito
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        messageContainer.appendChild(alertDiv);
         document.getElementById('folderName').value = '';
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
-        modal.hide(); 
+        modal.hide();
       } else {
-        alert(data.error || 'Error al crear la carpeta');
+        const messageContainer = document.getElementById('messageContainer');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.role = 'alert';
+        alertDiv.innerHTML = `
+          ${data.error || 'Error al crear la carpeta'}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        messageContainer.appendChild(alertDiv);
       }
     })
     .catch(error => console.error('Error:', error));
@@ -327,19 +343,6 @@ function enterSharedFolder(folderPath) {
 }
 
 
-function goBackSharedFolder() {
-  if (sharedPathStack.length > 0) {
-    sharedPathStack.pop();
-    const previousPath = sharedPathStack.length > 0 ? sharedPathStack[sharedPathStack.length - 1] : '';
-    if (previousPath) {
-      enterSharedFolder(previousPath); 
-    } else {
-      loadSharedFiles(); 
-    }
-  } else {
-    loadSharedFiles(); 
-  }
-}
 
 function updateBreadcrumb(path) {
   const breadcrumb = document.getElementById('breadcrumb');
