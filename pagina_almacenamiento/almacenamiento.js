@@ -45,6 +45,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     history.replaceState(null, '', window.location.pathname);
   }
+
+  const breadcrumb = document.getElementById('breadcrumb');
+  breadcrumb.addEventListener('click', function (event) {
+    if (event.target.textContent === 'Inicio') {
+      if (showingSharedFiles) {
+        sharedPathStack = []; // Reset shared path stack
+        loadSharedFiles(); // Load root of shared files
+      } else {
+        currentPath = ''; // Reset local path
+        loadLocalFiles(); // Load root of local files
+      }
+    }
+  });
 });
 
 function updatePathDisplay(path, isShared) {
