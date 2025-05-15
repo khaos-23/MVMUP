@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['file']) || empty($data['file'])) {
-    echo json_encode(['error' => 'Archivo no especificado.']);
+    header("Location: /pagina_almacenamiento/index.html?message=Archivo no especificado&type=error");
     exit;
 }
 
@@ -18,7 +18,7 @@ $base_directory = "/mvmup_stor/$id";
 $full_path = realpath($base_directory . '/' . ltrim($file, '/'));
 
 if (!$full_path || strpos($full_path, realpath($base_directory)) !== 0) {
-    echo json_encode(['error' => 'Acceso no permitido.']);
+    header("Location: /pagina_almacenamiento/index.html?message=Ruta inválida&type=error");
     exit;
 }
 
@@ -33,7 +33,12 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
             $stmt = $conn->prepare("DELETE FROM shared_files WHERE file_path = ? AND (owner_id = ? OR shared_with_id = ?)");
             $stmt->bind_param("sii", $folder, $userId, $userId);
             $stmt->execute();
-            return unlink($folder);
+            if (unlink($folder)) {
+                header("Location: /pagina_almacenamiento/index.html?message=Archivo eliminado con éxito&type=success");
+            } else {
+                header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar el archivo&type=error");
+            }
+            return;
         }
 
         $items = array_diff(scandir($folder), ['.', '..']);
@@ -45,7 +50,10 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
                 $stmt = $conn->prepare("DELETE FROM shared_files WHERE file_path = ? AND (owner_id = ? OR shared_with_id = ?)");
                 $stmt->bind_param("sii", $itemPath, $userId, $userId);
                 $stmt->execute();
-                unlink($itemPath);
+                if (!unlink($itemPath)) {
+                    header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar un archivo en la carpeta&type=error");
+                    return;
+                }
             }
         }
 
@@ -53,15 +61,19 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
         $stmt->bind_param("sii", $folder, $userId, $userId);
         $stmt->execute();
 
-        return rmdir($folder);
+        if (rmdir($folder)) {
+            header("Location: /pagina_almacenamiento/index.html?message=Carpeta eliminada con éxito&type=success");
+        } else {
+            header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar la carpeta&type=error");
+        }
     }
 
     if (deleteFolderRecursively($full_path, $conn, $id)) {
-        echo json_encode(['success' => true, 'message' => 'Archivo o carpeta eliminados con éxito.']);
+        // Mensaje ya manejado dentro de la función
     } else {
-        echo json_encode(['error' => 'Error al eliminar el archivo o carpeta.']);
+        header("Location: /pagina_almacenamiento/index.html?message=Error desconocido&type=error");
     }
 } else {
-    echo json_encode(['error' => 'No tienes permiso para eliminar este archivo o carpeta.']);
+    header("Location: /pagina_almacenamiento/index.html?message=Archivo o carpeta no encontrado&type=error");
 }
 ?>
