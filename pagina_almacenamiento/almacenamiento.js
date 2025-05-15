@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
     messageContainer.appendChild(alertDiv);
 
+    // Eliminar parámetros de la URL
+    history.replaceState(null, '', window.location.pathname);
   }
 });
 
