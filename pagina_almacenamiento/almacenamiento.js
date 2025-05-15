@@ -204,24 +204,22 @@ function createFolder() {
     alert('Por favor, introduce un nombre para la carpeta.');
     return;
   }
-
-  // Enviar solicitud para crear la carpeta en el servidor
   fetch('/pagina_almacenamiento/create_folder.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ folder: currentPath + '/' + folderName }) // Ruta completa de la carpeta
+    body: JSON.stringify({ folder: currentPath + '/' + folderName })
   })
     .then(response => response.json())
     .then(data => {
       if (data.success) {
-        loadLocalFiles(); // Recargar la lista de archivos locales
-        document.getElementById('folderName').value = ''; // Limpiar el campo de entrada
+        loadLocalFiles();
+        document.getElementById('folderName').value = '';
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
-        modal.hide(); // Cerrar el modal
+        modal.hide();
       }
     })
     .catch(error => {
-      console.error('Error al crear la carpeta:', error);
+
     });
 }
 

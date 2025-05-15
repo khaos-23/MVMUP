@@ -10,17 +10,16 @@ if (isset($data['folder'])) {
     $base_directory = "/mvmup_stor/$id";
     $folder = realpath($base_directory) . '/' . trim($data['folder'], '/');
 
-    // Verificar que la ruta sea válida
     if (strpos($folder, realpath($base_directory)) !== 0) {
         header("Location: /pagina_almacenamiento/index.html?message=Acceso no permitido.&type=error");
         exit;
     }
 
-    // Crear la carpeta si no existe
     if (!file_exists($folder)) {
-        mkdir($folder, 0777, true); // Crear la carpeta con permisos recursivos
+        mkdir ($folder, 0777, true);
         if (true) {
             header("Location: /pagina_almacenamiento/index.html?message=Carpeta creada con éxito.&type=success");  
+           
         } else {
             header("Location: /pagina_almacenamiento/index.html?message=No se pudo crear la carpeta&type=error");
         }
