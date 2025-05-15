@@ -207,11 +207,18 @@ function deleteFile(filePath) {
   })
     .then(response => response.json())
     .then(data => {
+      const messageContainer = document.getElementById('messageContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        ${data.message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      messageContainer.appendChild(alertDiv);
+
       if (data.success) {
-        loadLocalFiles(); 
-        alert('Archivo o carpeta eliminados con éxito.');
-      } else {
-        alert(data.error || 'Error al eliminar el archivo o carpeta.');
+        loadLocalFiles(); // Recargar la lista de archivos locales
       }
     })
     .catch(error => console.error('Error al eliminar el archivo o carpeta:', error));

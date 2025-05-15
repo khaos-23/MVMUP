@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!isset($data['file']) || empty($data['file'])) {
-    header("Location: /pagina_almacenamiento/index.html?message=Archivo no especificado&type=error");
+    echo json_encode(["success" => false, "message" => "Archivo no especificado."]);
     exit;
 }
 
@@ -18,7 +18,7 @@ $base_directory = "/mvmup_stor/$id";
 $full_path = realpath($base_directory . '/' . ltrim($file, '/'));
 
 if (!$full_path || strpos($full_path, realpath($base_directory)) !== 0) {
-    header("Location: /pagina_almacenamiento/index.html?message=Ruta inválida&type=error");
+    echo json_encode(["success" => false, "message" => "Ruta inválida."]);
     exit;
 }
 
@@ -33,26 +33,22 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
             $stmt = $conn->prepare("DELETE FROM shared_files WHERE file_path = ? AND (owner_id = ? OR shared_with_id = ?)");
             $stmt->bind_param("sii", $folder, $userId, $userId);
             $stmt->execute();
-            if (unlink($folder)) {
-                header("Location: /pagina_almacenamiento/index.html?message=Archivo eliminado con éxito&type=success");
-            } else {
-                header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar el archivo&type=error");
-            }
-            return;
+            return unlink($folder);
         }
 
         $items = array_diff(scandir($folder), ['.', '..']);
         foreach ($items as $item) {
             $itemPath = $folder . DIRECTORY_SEPARATOR . $item;
             if (is_dir($itemPath)) {
-                deleteFolderRecursively($itemPath, $conn, $userId);
+                if (!deleteFolderRecursively($itemPath, $conn, $userId)) {
+                    return false;
+                }
             } else {
                 $stmt = $conn->prepare("DELETE FROM shared_files WHERE file_path = ? AND (owner_id = ? OR shared_with_id = ?)");
                 $stmt->bind_param("sii", $itemPath, $userId, $userId);
                 $stmt->execute();
                 if (!unlink($itemPath)) {
-                    header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar un archivo en la carpeta&type=error");
-                    return;
+                    return false;
                 }
             }
         }
@@ -61,19 +57,16 @@ if (strpos($full_path, realpath($base_directory)) === 0 || $result->num_rows > 0
         $stmt->bind_param("sii", $folder, $userId, $userId);
         $stmt->execute();
 
-        if (rmdir($folder)) {
-            header("Location: /pagina_almacenamiento/index.html?message=Carpeta eliminada con éxito&type=success");
-        } else {
-            header("Location: /pagina_almacenamiento/index.html?message=Error al eliminar la carpeta&type=error");
-        }
+        return rmdir($folder);
     }
 
     if (deleteFolderRecursively($full_path, $conn, $id)) {
         echo json_encode(["success" => true, "message" => "Archivo o carpeta eliminados con éxito."]);
     } else {
-        echo json_encode(["success" => false, "message" => "Error desconocido."]);
+        echo json_encode(["success" => false, "message" => "Error al eliminar el archivo o carpeta."]);
     }
 } else {
-    header("Location: /pagina_almacenamiento/index.html?message=Archivo o carpeta no encontrado&type=error");
+    echo json_encode(["success" => false, "message" => "Archivo o carpeta no encontrado."]);
 }
+$conn->close();
 ?>
