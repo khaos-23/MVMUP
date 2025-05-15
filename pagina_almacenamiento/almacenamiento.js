@@ -150,9 +150,6 @@ function enterFolder(folderPath) {
   updateBreadcrumb(currentPath);
 }
 
-
-
-
 function shareItem(itemPath, isFolder) {
     const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
     document.getElementById('recipientEmail').value = ''; // Limpiar el campo de correo
@@ -209,7 +206,6 @@ function createFolder() {
     alert('Por favor, introduce un nombre para la carpeta.');
     return;
   }
-
   fetch('/pagina_almacenamiento/create_folder.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
