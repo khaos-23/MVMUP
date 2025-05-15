@@ -175,24 +175,29 @@ function goBack() {
 
 
 function shareItem(itemPath, isFolder) {
-  const recipient = prompt('Introduce el email del destinatario:');
-  if (!recipient) return;
+    const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+    document.getElementById('recipientEmail').value = ''; // Limpiar el campo de correo
+    document.getElementById('shareFileForm').onsubmit = function (e) {
+        e.preventDefault();
+        const recipient = document.getElementById('recipientEmail').value;
+        if (!recipient) return;
 
-  fetch('/pagina_almacenamiento/share_file.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: itemPath, recipient, isFolder })
-  })
-    .then(response => {
-      if (response.redirected) {
-        window.location.href = response.url; // Redirigir para mostrar el mensaje
-      } else {
-        return response.json();
-      }
-    })
-    .catch(error => console.error('Error al compartir el elemento:', error));
+        fetch('/pagina_almacenamiento/share_file.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ file: itemPath, recipient, isFolder })
+        })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirigir para mostrar el mensaje
+                } else {
+                    return response.json();
+                }
+            })
+            .catch(error => console.error('Error al compartir el elemento:', error));
+    };
+    shareModal.show();
 }
-
 
 function deleteFile(filePath) {
   if (confirm('¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.')) {
