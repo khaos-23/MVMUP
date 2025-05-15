@@ -210,7 +210,7 @@ function createFolder() {
   })
     .then(response => response.json())
     .then(data => {
-      const messageContainer = document.getElementById('messageContainer');
+    const messageContainer = document.getElementById('messageContainer');
       const alertDiv = document.createElement('div');
       alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
       alertDiv.role = 'alert';
@@ -219,26 +219,11 @@ function createFolder() {
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       `;
       messageContainer.appendChild(alertDiv);
-
       if (data.success) {
         loadLocalFiles();
-        document.getElementById('folderName').value = '';
-        const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
-        modal.hide();
       }
     })
-    .catch(error => {
-      console.error('Error:', error);
-      const messageContainer = document.getElementById('messageContainer');
-      const alertDiv = document.createElement('div');
-      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-      alertDiv.role = 'alert';
-      alertDiv.innerHTML = `
-        Error al crear la carpeta.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      `;
-      messageContainer.appendChild(alertDiv);
-    });
+    .catch(error => console.error('Error:', error));
 }
 
 document.addEventListener('DOMContentLoaded', function () {
