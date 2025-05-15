@@ -44,6 +44,16 @@ document.addEventListener('DOMContentLoaded', function () {
     messageContainer.appendChild(alertDiv);
 
   }
+
+  // Añadir evento para crear carpeta al presionar "Enter"
+  const folderNameInput = document.getElementById('folderName');
+  folderNameInput.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      createFolder();
+    }
+  });
+
 });
 
 
@@ -210,15 +220,25 @@ function createFolder() {
   })
     .then(response => response.json())
     .then(data => {
+      const messageContainer = document.getElementById('messageContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        ${data.message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      messageContainer.appendChild(alertDiv);
+
       if (data.success) {
-        loadLocalFiles();
-        document.getElementById('folderName').value = '';
+        loadLocalFiles(); // Recargar la lista de archivos locales
+        document.getElementById('folderName').value = ''; // Limpiar el campo de entrada
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
         modal.hide();
       }
     })
     .catch(error => {
-
+      console.error('Error al crear la carpeta:', error);
     });
 }
 
