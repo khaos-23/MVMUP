@@ -24,10 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-
-
-  loadLocalFiles();
-
   const urlParams = new URLSearchParams(window.location.search);
   const message = urlParams.get('message');
   const type = urlParams.get('type');
@@ -44,16 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
     messageContainer.appendChild(alertDiv);
 
     history.replaceState(null, '', window.location.pathname);
-  }
-
-  const inicioButton = document.querySelector('a.nav-link[onclick="loadLocalFiles()"]');
-  if (inicioButton) {
-    inicioButton.addEventListener('click', function (event) {
-      event.preventDefault(); // Prevent default link behavior
-      currentPath = ''; // Reset the path
-      loadLocalFiles(); // Reload local files
-      updateBreadcrumb(currentPath); // Reset breadcrumb
-    });
   }
 });
 
@@ -160,7 +146,7 @@ function enterFolder(folderPath) {
 
 function shareItem(itemPath, isFolder) {
     const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
-    document.getElementById('recipientEmail').value = ''; // Limpiar el campo de correo
+    document.getElementById('recipientEmail').value = ''; 
     document.getElementById('shareFileForm').onsubmit = function (e) {
         e.preventDefault();
         const recipient = document.getElementById('recipientEmail').value;
@@ -173,7 +159,7 @@ function shareItem(itemPath, isFolder) {
         })
             .then(response => {
                 if (response.redirected) {
-                    window.location.href = response.url; // Redirigir para mostrar el mensaje
+                    window.location.href = response.url; 
                 } else {
                     return response.json();
                 }
@@ -310,26 +296,3 @@ function enterSharedFolder(folderPath) {
 
 
 
-function updateBreadcrumb(path) {
-  const breadcrumb = document.getElementById('breadcrumb');
-  breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRoot()">Inicio</a></li>';
-
-  if (path) {
-    const parts = path.split('/').filter(Boolean);
-    let accumulatedPath = '';
-
-    parts.forEach((part, index) => {
-      accumulatedPath += '/' + part;
-      if (index === parts.length - 1) {
-        breadcrumb.innerHTML += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
-      } else {
-        breadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="enterFolder('${accumulatedPath}')">${part}</a></li>`;
-      }
-    });
-  }
-}
-function navigateToRoot() {
-  currentPath = '';
-  loadLocalFiles();
-  updateBreadcrumb(currentPath);
-}

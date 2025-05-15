@@ -23,7 +23,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="#" onclick="loadLocalFiles()">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="/index.html">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="/pagina_almacenamiento/index.html">Almacenamiento</a></li>
           <li class="nav-item"><a class="nav-link" href="/forum/index.php">Forum</a></li>
           <li class="nav-item" id="auth-link">
@@ -38,29 +38,16 @@
     <div class="container mt-5 pt-5">
       <button id="toggleViewBtn" class="btn btn-primary mb-3">Ver Archivos Compartidos</button>
 
-      <div id="breadcrumbContainer" class="mb-3">
+      <div id="localFilesContainer">
+        <h2>Archivos Locales</h2>
+        <div id="breadcrumbContainer" class="mb-3">
         <nav aria-label="breadcrumb">
           <ol id="breadcrumb" class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#" onclick="navigateToRoot()">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="#" onclick="loadLocalFiles()">Inicio</a></li>
           </ol>
         </nav>
       </div>
 
-      <div id="localFilesContainer">
-        <h2>Archivos Locales</h2>
-   
-        <button id="goBackBtn" class="btn btn-light mb-3" onclick="goBack()" style="display: none;">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <ul id="localFileList" class="list-group"></ul>
-      </div>
-
-      <div id="sharedFilesContainer" style="display: none;">
-        <h2>Archivos Compartidos</h2>
-
-        <button id="sharedGoBackBtn" class="btn btn-light mb-3" onclick="goBackSharedFolder()" style="display: none;">
-          <i class="fas fa-arrow-left"></i>
-        </button>
         <ul id="sharedFileList" class="list-group"></ul>
       </div>
     </div>
