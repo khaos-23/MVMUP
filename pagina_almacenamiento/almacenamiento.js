@@ -43,9 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
     messageContainer.appendChild(alertDiv);
 
-    // Remove message from URL
-    const newUrl = window.location.href.split('?')[0];
-    window.history.replaceState({}, document.title, newUrl);
   }
 });
 
