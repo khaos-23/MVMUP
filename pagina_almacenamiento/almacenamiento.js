@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function enterSharedFolder(folderPath) {
-  sharedPathStack.push(folderPath); 
+  sharedPathStack.push(folderPath);
   fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(folderPath)}`)
     .then(response => response.json())
     .then(files => {
