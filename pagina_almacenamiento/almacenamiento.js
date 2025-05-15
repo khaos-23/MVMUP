@@ -210,14 +210,35 @@ function createFolder() {
   })
     .then(response => response.json())
     .then(data => {
+      const messageContainer = document.getElementById('messageContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        ${data.message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      messageContainer.appendChild(alertDiv);
+
       if (data.success) {
         loadLocalFiles();
         document.getElementById('folderName').value = '';
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
-        modal.hide(); 
+        modal.hide();
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+      console.error('Error:', error);
+      const messageContainer = document.getElementById('messageContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        Error al crear la carpeta.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      messageContainer.appendChild(alertDiv);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
