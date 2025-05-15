@@ -47,6 +47,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const newUrl = window.location.href.split('?')[0];
     window.history.replaceState({}, document.title, newUrl);
   }
+
+  const uploadForm = document.getElementById('uploadForm');
+  const uploadButton = document.querySelector('.upload-btn');
+
+  uploadButton.addEventListener('click', function () {
+    uploadForm.submit();
+  });
+
+  uploadForm.addEventListener('submit', function (event) {
+    // Validaciones adicionales si es necesario
+    console.log('Formulario enviado');
+  });
 });
 
 
