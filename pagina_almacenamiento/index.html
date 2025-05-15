@@ -23,7 +23,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="loadLocalFiles()">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="/pagina_almacenamiento/index.html">Almacenamiento</a></li>
           <li class="nav-item"><a class="nav-link" href="/forum/index.php">Forum</a></li>
           <li class="nav-item" id="auth-link">
@@ -48,7 +48,6 @@
 
       <div id="localFilesContainer">
         <h2>Archivos Locales</h2>
-        <p>Ruta actual: <span id="localPathDisplay">/</span></p>
    
         <button id="goBackBtn" class="btn btn-light mb-3" onclick="goBack()" style="display: none;">
           <i class="fas fa-arrow-left"></i>
@@ -58,7 +57,6 @@
 
       <div id="sharedFilesContainer" style="display: none;">
         <h2>Archivos Compartidos</h2>
-        <p>Ruta actual: <span id="sharedPathDisplay">/</span></p>
 
         <button id="sharedGoBackBtn" class="btn btn-light mb-3" onclick="goBackSharedFolder()" style="display: none;">
           <i class="fas fa-arrow-left"></i>

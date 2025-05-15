@@ -46,31 +46,23 @@ document.addEventListener('DOMContentLoaded', function () {
     history.replaceState(null, '', window.location.pathname);
   }
 
-  const breadcrumb = document.getElementById('breadcrumb');
-  breadcrumb.addEventListener('click', function (event) {
-    if (event.target.textContent === 'Inicio') {
-      if (showingSharedFiles) {
-        sharedPathStack = []; // Reset shared path stack
-        loadSharedFiles(); // Load root of shared files
-      } else {
-        currentPath = ''; // Reset local path
-        loadLocalFiles(); // Load root of local files
-      }
-    }
-  });
+  const inicioButton = document.querySelector('a.nav-link[onclick="loadLocalFiles()"]');
+  if (inicioButton) {
+    inicioButton.addEventListener('click', function (event) {
+      event.preventDefault(); // Prevent default link behavior
+      currentPath = ''; // Reset the path
+      loadLocalFiles(); // Reload local files
+      updateBreadcrumb(currentPath); // Reset breadcrumb
+    });
+  }
 });
 
-function updatePathDisplay(path, isShared) {
-  const pathDisplay = document.getElementById(isShared ? 'sharedPathDisplay' : 'localPathDisplay');
-  pathDisplay.textContent = path || '/';
-}
 
 function loadLocalFiles() {
   fetch(`/pagina_almacenamiento/list_files.php?path=${encodeURIComponent(currentPath)}`)
     .then(response => response.json())
     .then(files => {
       updateBreadcrumb(currentPath);
-      updatePathDisplay(currentPath, false); // Update local path display
       const localFileList = document.getElementById('localFileList');
       localFileList.innerHTML = '';
 
@@ -115,37 +107,36 @@ function loadLocalFiles() {
     });
 }
 
+
 function loadSharedFiles() {
-  const currentSharedPath = sharedPathStack[sharedPathStack.length - 1] || '';
-  updatePathDisplay(currentSharedPath, true); // Update shared path display
-  fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(currentSharedPath)}`)
+  fetch('/pagina_almacenamiento/list_shared_folders.php')
     .then(response => response.json())
-    .then(files => {
+    .then(items => {
       const sharedFileList = document.getElementById('sharedFileList');
       sharedFileList.innerHTML = '';
 
-      if (files.error) {
-        sharedFileList.innerHTML = `<li class="list-group-item text-danger">${files.error}</li>`;
+      if (items.error) {
+        sharedFileList.innerHTML = `<li class="list-group-item text-danger">${items.error}</li>`;
         return;
       }
 
-      files.forEach(file => {
+      items.forEach(item => {
         const listItem = document.createElement('li');
         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
-        if (file.is_dir) {
+        if (item.is_dir) {
           listItem.innerHTML = `
-            <span class="folder-name" style="cursor: pointer;" onclick="enterSharedFolder('${file.path}')">
-              <i class="fas fa-folder text-warning me-2"></i>${file.name}
+            <span class="folder-name" style="cursor: pointer;" onclick="enterSharedFolder('${item.path}')">
+              <i class="fas fa-folder text-warning me-2"></i>${item.name}
             </span>
           `;
         } else {
           listItem.innerHTML = `
             <span>
-              <i class="fas fa-file text-secondary me-2"></i>${file.name}
+              <i class="fas fa-file text-secondary me-2"></i>${item.name}
             </span>
             <div>
-              <a href="/pagina_almacenamiento/download.php?file=${encodeURIComponent(file.path)}" class="btn btn-sm btn-success" download>Descargar</a>
+              <a href="/pagina_almacenamiento/download.php?file=${encodeURIComponent(item.path)}" class="btn btn-sm btn-success" download>Descargar</a>
             </div>
           `;
         }
@@ -273,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+
 function enterSharedFolder(folderPath) {
   sharedPathStack.push(folderPath); 
   fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(folderPath)}`)
@@ -316,6 +308,8 @@ function enterSharedFolder(folderPath) {
     });
 }
 
+
+
 function updateBreadcrumb(path) {
   const breadcrumb = document.getElementById('breadcrumb');
   breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRoot()">Inicio</a></li>';
@@ -334,7 +328,6 @@ function updateBreadcrumb(path) {
     });
   }
 }
-
 function navigateToRoot() {
   currentPath = '';
   loadLocalFiles();
