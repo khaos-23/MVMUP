@@ -14,21 +14,18 @@ if (empty($path)) {
 }
 
 $base_directory = realpath("/mvmup_stor");
-$full_path = realpath($base_directory . '/' . ltrim($path, '/'));
+$full_path = realpath($path);
 
-// Validar que la ruta sea válida y esté dentro del directorio base
-if (!$full_path || strpos($full_path, $base_directory) !== 0) {
-    die(json_encode(["error" => "No tienes permiso para acceder a esta carpeta."]));
-}
 
 $stmt = $conn->prepare("SELECT file_path FROM shared_files WHERE shared_with_id = ? AND file_path = ?");
 $stmt->bind_param("is", $user_id, $full_path);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows === 0) {
+if ($result->num_rows === 0 || !$full_path || strpos($full_path, $base_directory) !== 0) {
     die(json_encode(["error" => "No tienes permiso para acceder a esta carpeta."]));
 }
+
 
 if (is_dir($full_path)) {
     $items = array_diff(scandir($full_path), ['.', '..']);
