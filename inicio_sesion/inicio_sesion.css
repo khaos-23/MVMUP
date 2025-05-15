@@ -1,0 +1,14 @@
+
+body {
+  background: linear-gradient(135deg, #4e54c8, #8f94fb);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+footer {
+  flex-shrink: 0;
+}

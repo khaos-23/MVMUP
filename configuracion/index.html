@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - MVMUP</title>
+  <link rel="icon" href="/img/favicon-logo.ico">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="/configuracion/configuracion.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <img src="/img/logo.png" alt="Logo MVMUP" class="rounded-circle" width="50" height="50">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="/pagina_almacenamiento/index.html">Almacenamiento</a></li>
+          <li class="nav-item"><a class="nav-link" href="/forum/index.php">Forum</a></li>
+          <li class="nav-item" id="auth-link">
+            <a class="nav-link" href="/inicio_sesion/index.html">Iniciar sesión/Registrarse</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Pagina de configuracion -->
+  <div class="container mt-5 pt-5">
+    <h1 class="text-center mb-4">Configuración</h1>
+
+    <!-- Cambiar contraseña -->
+    <form id="change-password-form">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Cambiar contraseña</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="current-password" class="form-label">Contraseña actual:</label>
+            <input type="password" id="current-password" name="current-password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="new-password" class="form-label">Nueva contraseña:</label>
+            <input type="password" id="new-password" name="new-password" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirm-new-password" class="form-label">Confirmar nueva contraseña:</label>
+            <input type="password" id="confirm-new-password" name="confirm-new-password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+          <!-- Mensaje respuesta -->
+          <div id="password-message" class="mt-3"></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Cambiar correo -->
+    <form id="change-email-form">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Cambiar correo electrónico</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="current-email" class="form-label">Correo actual:</label>
+            <input type="email" id="current-email" name="current-email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="new-email" class="form-label">Nuevo correo:</label>
+            <input type="email" id="new-email" name="new-email" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Cambiar correo</button>
+          <!-- Mensaje respuesta -->
+          <div id="email-message" class="mt-3"></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Cambiar nombre usuario -->
+    <form id="change-username-form">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Cambiar nombre de usuario</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="current-username" class="form-label">Nombre de usuario actual:</label>
+            <input type="text" id="current-username" name="current-username" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="new-username" class="form-label">Nuevo nombre de usuario:</label>
+            <input type="text" id="new-username" name="new-username" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Cambiar nombre de usuario</button>
+          <!-- Mensaje respuesta -->
+          <div id="username-message" class="mt-3"></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Cerrar sesion -->
+    <form id="logout-form">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">Cerrar sesion</h5>
+        </div>
+        <div class="card-body">
+          <p>¿Deseas cerrar sesion?</p>
+          <button type="submit" class="btn btn-danger">Cerrar sesion</button>
+          <!-- Mensaje respuesta -->
+          <div id="logout-message" class="mt-3"></div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-3 mt-auto">
+    <div class="container d-flex flex-wrap justify-content-between">
+      <div class="footer-left">
+        <p>Has iniciado sesión como: <span id="username"></span></p>
+      </div>
+      <div class="footer-center text-center flex-grow-1">
+        <p>&copy; IES Manuel Vazquez Montalban. Todos los derechos reservados.</p>
+      </div>
+      <div class="footer-right text-end">
+        <p><a href="https://agora.xtec.cat/iesmvm" class="text-white text-decoration-none">Modle MVM: https://agora.xtec.cat/iesmvm/</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS  -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+  <script src="/check_sesion.js"></script>
+  <script src="/configuracion/configuracion.js"></script>
+</body>
+</html>
