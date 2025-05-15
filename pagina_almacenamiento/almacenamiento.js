@@ -24,21 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Eliminamos el botón de volver de la sección de archivos locales
-  const goBackBtn = document.getElementById('goBackBtn');
-  if (goBackBtn) {
-    goBackBtn.remove();
-  }
 
-  // Eliminamos el botón de volver de la sección de archivos compartidos
-  const sharedGoBackBtn = document.getElementById('sharedGoBackBtn');
-  if (sharedGoBackBtn) {
-    sharedGoBackBtn.remove();
-  }
 
   loadLocalFiles();
 
-  // Display message from query parameters
   const urlParams = new URLSearchParams(window.location.search);
   const message = urlParams.get('message');
   const type = urlParams.get('type');
@@ -162,16 +151,6 @@ function enterFolder(folderPath) {
 }
 
 
-function goBack() {
-  if (currentPath) {
-    const pathParts = currentPath.split('/').filter(Boolean);
-    pathParts.pop(); 
-    currentPath = pathParts.join('/');
-    loadLocalFiles();
-    document.getElementById('uploadPath').value = currentPath; 
-    updateBreadcrumb(currentPath);
-  }
-}
 
 
 function shareItem(itemPath, isFolder) {
@@ -240,28 +219,9 @@ function createFolder() {
     .then(data => {
       if (data.success) {
         loadLocalFiles();
-        const messageContainer = document.getElementById('messageContainer');
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-success alert-dismissible fade show';
-        alertDiv.role = 'alert';
-        alertDiv.innerHTML = `
-          Carpeta creada con éxito
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        messageContainer.appendChild(alertDiv);
         document.getElementById('folderName').value = '';
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
-        modal.hide();
-      } else {
-        const messageContainer = document.getElementById('messageContainer');
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-        alertDiv.role = 'alert';
-        alertDiv.innerHTML = `
-          ${data.error || 'Error al crear la carpeta'}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        `;
-        messageContainer.appendChild(alertDiv);
+        modal.hide(); 
       }
     })
     .catch(error => console.error('Error:', error));
