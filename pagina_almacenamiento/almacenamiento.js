@@ -1,6 +1,8 @@
 let currentPath = ''; 
 let showingSharedFiles = false;
 let sharedPathStack = []; 
+let itemToSharePath = null;
+let itemToShareIsFolder = null;
 
 document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
@@ -154,22 +156,16 @@ function goBack() {
 
 
 function shareItem(itemPath, isFolder) {
-  // Guardar la ruta y tipo en campos ocultos del modal
-  document.getElementById('sharePath').value = itemPath;
+  itemToSharePath = itemPath;
+  itemToShareIsFolder = isFolder;
+  // Limpiar campo email y mostrar modal
   document.getElementById('recipientEmail').value = '';
-  // Guardar si es carpeta (por si lo necesitas en el backend)
-  document.getElementById('sharePath').dataset.isFolder = isFolder ? '1' : '0';
-  // Mostrar el modal
-  const modal = new bootstrap.Modal(document.getElementById('shareModal'));
-  modal.show();
+  const shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+  shareModal.show();
 }
 
-// Nueva función para confirmar el compartir desde el modal
 function confirmShare() {
   const recipient = document.getElementById('recipientEmail').value.trim();
-  const itemPath = document.getElementById('sharePath').value;
-  const isFolder = document.getElementById('sharePath').dataset.isFolder === '1';
-
   if (!recipient) {
     showUploadNotification('Por favor, introduce el email del destinatario.', false);
     return;
@@ -178,7 +174,7 @@ function confirmShare() {
   fetch('/pagina_almacenamiento/share_file.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: itemPath, recipient, isFolder })
+    body: JSON.stringify({ file: itemToSharePath, recipient, isFolder: itemToShareIsFolder })
   })
     .then(response => response.json())
     .then(data => {
@@ -188,14 +184,15 @@ function confirmShare() {
         showUploadNotification(data.message || 'Error al compartir el elemento.', false);
       }
       // Cerrar modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
-      if (modal) modal.hide();
+      const shareModal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
+      if (shareModal) shareModal.hide();
     })
     .catch(error => {
       showUploadNotification('Error al compartir el elemento.', false);
       console.error('Error al compartir el elemento:', error);
-      const modal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
-      if (modal) modal.hide();
+      // Cerrar modal
+      const shareModal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
+      if (shareModal) shareModal.hide();
     });
 }
 
