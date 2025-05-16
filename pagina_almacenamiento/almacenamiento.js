@@ -202,7 +202,7 @@ function showDeleteConfirmModal(filePath) {
             <p>¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.</p>
           </div>
           <div class="modal-footer">
-            <button type="button" id="cancelDeleteBtn" class="btn btn-danger">Cancelar</button>
+            <button type="button" id="cancelDeleteBtn" class="btn btn-danger" background-color="grey">Cancelar</button>
             <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
           </div>
         </div>
