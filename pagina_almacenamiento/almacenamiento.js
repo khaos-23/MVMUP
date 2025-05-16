@@ -3,7 +3,6 @@ let showingSharedFiles = false;
 let sharedPathStack = []; 
 let itemToSharePath = null;
 let itemToShareIsFolder = null;
-let fileToDeletePath = null; // Nuevo: para guardar el archivo a eliminar
 
 document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
@@ -199,40 +198,26 @@ function confirmShare() {
 
 
 function deleteFile(filePath) {
-  fileToDeletePath = filePath;
-  // Mostrar modal personalizado
-  const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-  deleteModal.show();
-}
-
-// Nueva función: llamada al confirmar en el modal
-function confirmDelete() {
-  if (!fileToDeletePath) return;
-  fetch('/pagina_almacenamiento/delete_file.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: fileToDeletePath })
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        loadLocalFiles();
-        showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
-      } else {
-        showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
-      }
-      fileToDeletePath = null;
-      // Cerrar modal
-      const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-      if (deleteModal) deleteModal.hide();
+  if (confirm('¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.')) {
+    fetch('/pagina_almacenamiento/delete_file.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: filePath })
     })
-    .catch(error => {
-      showUploadNotification('Error al eliminar el archivo o carpeta.', false);
-      fileToDeletePath = null;
-      const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-      if (deleteModal) deleteModal.hide();
-      console.error('Error al eliminar el archivo o carpeta:', error);
-    });
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          loadLocalFiles();
+          showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
+        } else {
+          showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
+        }
+      })
+      .catch(error => {
+        showUploadNotification('Error al eliminar el archivo o carpeta.', false);
+        console.error('Error al eliminar el archivo o carpeta:', error);
+      });
+  }
 }
 
 function createFolder() {
