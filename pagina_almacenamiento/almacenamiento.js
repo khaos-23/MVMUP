@@ -438,29 +438,21 @@ function updateSharedBreadcrumb() {
   sharedBreadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToSharedRoot()">Inicio</a></li>';
 
   if (sharedPathStack.length > 0) {
-    
+    // Tomar la ruta absoluta actual
     const currentSharedPath = sharedPathStack[sharedPathStack.length - 1];
+    // Dividir la ruta en partes
     const parts = currentSharedPath.split('/').filter(Boolean);
 
-    
+    // Quitar las dos primeras carpetas (root y usuario)
+    // Ejemplo: /mvmup_stor/123/mi/carpeta/compartida -> ["mvmup_stor", "123", "mi", "carpeta", "compartida"]
+    // Mostramos solo ["mi", "carpeta", "compartida"]
     const visibleParts = parts.slice(2);
 
-    
-    const showParts = visibleParts.length > 2 ? visibleParts.slice(0, -2) : [];
-    let accumulatedPath = parts.slice(0, 2).join('/');
+    let accumulatedPath = parts.slice(0, 2).join('/'); // /mvmup_stor/123
 
-    showParts.forEach((part, index) => {
+    visibleParts.forEach((part, idx) => {
       accumulatedPath += '/' + part;
-      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
-    });
-    if (visibleParts.length > 2) {
-      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item">...</li>`;
-    }
-   
-    const lastParts = visibleParts.slice(-2);
-    lastParts.forEach((part, idx) => {
-      accumulatedPath += '/' + part;
-      if (idx === lastParts.length - 1) {
+      if (idx === visibleParts.length - 1) {
         sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
       } else {
         sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
