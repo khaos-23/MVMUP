@@ -193,7 +193,7 @@ function deleteFile(filePath) {
 function createFolder() {
   const folderName = document.getElementById('folderName').value.trim();
   if (!folderName) {
-    alert('Por favor, introduce un nombre para la carpeta.');
+    showUploadNotification('Por favor, introduce un nombre para la carpeta.', false);
     return;
   }
 
@@ -206,15 +206,18 @@ function createFolder() {
     .then(data => {
       if (data.success) {
         loadLocalFiles();
-        alert('Carpeta creada con éxito');
+        showUploadNotification(data.message || 'Carpeta creada con éxito', true);
         document.getElementById('folderName').value = '';
         const modal = bootstrap.Modal.getInstance(document.getElementById('createFolderModal'));
         modal.hide(); 
       } else {
-        alert(data.error || 'Error al crear la carpeta');
+        showUploadNotification(data.message || 'Error al crear la carpeta', false);
       }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+      showUploadNotification('Error al crear la carpeta', false);
+      console.error('Error:', error);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
