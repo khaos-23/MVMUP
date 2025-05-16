@@ -1,0 +1,61 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1 0 auto;
+}
+.footer {
+    flex-shrink: 0;
+}
+.upload-btn-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex; 
+    gap: 10px; 
+}
+
+.upload-btn, .btn-secondary {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover, .btn-secondary:hover {
+    transform: scale(1.1); 
+}
+
+.btn-group {
+    margin-left: 15px;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#goBackBtn, #sharedGoBackBtn {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px; 
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #ddd;
+}
+
+#goBackBtn:hover, #sharedGoBackBtn:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.1); 
+}
