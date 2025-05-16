@@ -27,6 +27,7 @@ $result = [];
 
 foreach ($ownFiles as $file) {
     $file_path = $directory . '/' . $file;
+    // Calcula la ruta relativa correctamente
     $relative_path = ltrim(($path ? $path . '/' : '') . $file, '/');
 
     $stmt = $conn->prepare("SELECT file_path FROM shared_files WHERE file_path = ? AND owner_id = ?");
@@ -37,7 +38,7 @@ foreach ($ownFiles as $file) {
     $result[] = [
         'name' => $file,
         'is_dir' => is_dir($file_path),
-        'path' => $relative_path,
+        'path' => $relative_path, // <-- siempre relativo
         'shared' => $stmt->num_rows > 0
     ];
 

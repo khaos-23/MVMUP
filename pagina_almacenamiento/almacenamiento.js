@@ -95,7 +95,6 @@ function loadLocalFiles() {
     });
 }
 
-
 function loadSharedFiles() {
   fetch('/pagina_almacenamiento/list_shared_folders.php')
     .then(response => response.json())
@@ -140,7 +139,8 @@ function loadSharedFiles() {
 }
 
 function enterFolder(folderPath) {
-  currentPath = folderPath;
+  // Asegura que folderPath es relativo
+  currentPath = folderPath.replace(/^\/+/, ''); // elimina cualquier '/' inicial
   loadLocalFiles();
   document.getElementById('uploadPath').value = currentPath; 
   updateBreadcrumb(currentPath);
