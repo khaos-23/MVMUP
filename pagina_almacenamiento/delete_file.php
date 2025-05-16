@@ -14,13 +14,10 @@ if (!isset($data['file']) || empty($data['file'])) {
 $file = $data['file']; 
 $id = $_SESSION['id'];
 
-$base_directory = realpath("/mvmup_stor/$id");
-if (!$base_directory) {
-    echo json_encode(["success" => false, "message" => "Directorio base no encontrado."]);
-    exit;
-}
+$base_directory = "/mvmup_stor/$id";
 $full_path = realpath($base_directory . '/' . ltrim($file, '/'));
-if (!$full_path || strpos($full_path, $base_directory) !== 0) {
+
+if (!$full_path || strpos($full_path, realpath($base_directory)) !== 0) {
     echo json_encode(["success" => false, "message" => "Ruta inválida."]);
     exit;
 }

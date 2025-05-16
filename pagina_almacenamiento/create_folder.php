@@ -8,14 +8,6 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 if (isset($data['folder'])) {
     $base_directory = realpath("/mvmup_stor/$id");
-    if (!$base_directory) {
-        // Si la carpeta del usuario no existe, créala
-        $base_directory = "/mvmup_stor/$id";
-        if (!file_exists($base_directory)) {
-            mkdir($base_directory, 0770, true);
-        }
-        $base_directory = realpath($base_directory);
-    }
     $folder = $base_directory . '/' . trim($data['folder'], '/');
 
     if (strpos($folder, $base_directory) !== 0) {

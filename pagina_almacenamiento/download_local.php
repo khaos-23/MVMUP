@@ -5,11 +5,6 @@ $id = $_SESSION['id'];
 
 if (isset($_GET['file'])) {
     $base_directory = realpath("/mvmup_stor/$id");
-    if (!$base_directory) {
-        http_response_code(403);
-        echo "Directorio base no encontrado.";
-        exit;
-    }
     $file = realpath($base_directory . '/' . ltrim($_GET['file'], '/'));
 
     

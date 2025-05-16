@@ -10,10 +10,7 @@ if (isset($data['file'], $data['recipient'])) {
     $file = $data['file']; 
 
     
-    $base_directory = realpath("/mvmup_stor/$id");
-    if (!$base_directory) {
-        exit;
-    }
+    $base_directory = "/mvmup_stor/$id";
     $full_path = realpath($base_directory . '/' . ltrim($file, '/'));
 
     
