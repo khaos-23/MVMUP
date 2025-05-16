@@ -328,10 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function enterSharedFolder(folderPath) {
-  // Si ya estamos en la carpeta, no la añadimos de nuevo al stack
-  if (sharedPathStack.length === 0 || sharedPathStack[sharedPathStack.length - 1] !== folderPath) {
-    sharedPathStack.push(folderPath);
-  }
+  sharedPathStack.push(folderPath); 
   updateSharedBreadcrumb();
   fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(folderPath)}`)
     .then(response => response.json())
@@ -449,22 +446,11 @@ function updateSharedBreadcrumb() {
     // Ocultar las dos primeras carpetas (mvmup_stor/{id_usuario})
     const visibleParts = parts.slice(2);
 
-    // Mostrar todas menos las dos últimas
-    const showParts = visibleParts.length > 2 ? visibleParts.slice(0, -2) : [];
     let accumulatedPath = parts.slice(0, 2).join('/'); // Empieza con las dos ocultas para reconstruir la ruta
 
-    showParts.forEach((part, index) => {
+    visibleParts.forEach((part, idx) => {
       accumulatedPath += '/' + part;
-      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
-    });
-    if (visibleParts.length > 2) {
-      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item">...</li>`;
-    }
-    // Mostrar las dos últimas (o menos si no hay tantas)
-    const lastParts = visibleParts.slice(-2);
-    lastParts.forEach((part, idx) => {
-      accumulatedPath += '/' + part;
-      if (idx === lastParts.length - 1) {
+      if (idx === visibleParts.length - 1) {
         sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
       } else {
         sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
@@ -473,27 +459,28 @@ function updateSharedBreadcrumb() {
   }
 }
 
-// Ir a raíz de compartidos
-function navigateToSharedRoot() {
-  sharedPathStack = [];
-  loadSharedFiles();
-  updateSharedBreadcrumb();
-}
-
 // Navegar a una carpeta específica desde el breadcrumb compartido
 function goToSharedBreadcrumb(targetPath) {
-  // Encuentra el índice de la ruta en el stack
-  let idx = -1;
+  // Reconstruir el stack hasta la ruta seleccionada
+  let found = false;
   for (let i = 0; i < sharedPathStack.length; i++) {
     if (sharedPathStack[i] === targetPath) {
-      idx = i;
+      sharedPathStack = sharedPathStack.slice(0, i + 1);
+      found = true;
       break;
     }
   }
-  if (idx !== -1) {
-    sharedPathStack = sharedPathStack.slice(0, idx + 1);
-    enterSharedFolder(targetPath);
+  if (!found) {
+    // Si no está en el stack, reconstruirlo desde la raíz
+    sharedPathStack = [];
+    const parts = targetPath.split('/').filter(Boolean);
+    let acc = '';
+    for (let i = 0; i < parts.length; i++) {
+      acc += (i === 0 ? '' : '/') + parts[i];
+      sharedPathStack.push('/' + acc);
+    }
   }
+  enterSharedFolder(targetPath);
 }
 
 // Notificación de subida
