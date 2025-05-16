@@ -195,6 +195,44 @@ function deleteFile(filePath) {
     .catch(error => console.error('Error al eliminar el archivo o carpeta:', error));
 }
 
+// Subida de archivos por AJAX
+document.addEventListener('DOMContentLoaded', function () {
+  // Interceptar el submit del formulario de subida
+  const uploadForm = document.getElementById('uploadForm');
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(uploadForm);
+      fetch('/pagina_almacenamiento/upload.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          const messageContainer = document.getElementById('messageContainer');
+          const alertDiv = document.createElement('div');
+          alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
+          alertDiv.role = 'alert';
+          alertDiv.innerHTML = `
+            ${data.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          `;
+          messageContainer.appendChild(alertDiv);
+
+          if (data.success) {
+            loadLocalFiles();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+            modal.hide();
+            uploadForm.reset();
+          }
+        })
+        .catch(error => {
+          console.error('Error al subir el archivo:', error);
+        });
+    });
+  }
+});
+
 function createFolder() {
   const folderName = document.getElementById('folderName').value.trim();
   if (!folderName) {
@@ -204,10 +242,20 @@ function createFolder() {
   fetch('/pagina_almacenamiento/create_folder.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ folder: currentPath + '/' + folderName })
+    body: JSON.stringify({ folder: currentPath ? currentPath + '/' + folderName : folderName })
   })
     .then(response => response.json())
     .then(data => {
+      const messageContainer = document.getElementById('messageContainer');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show`;
+      alertDiv.role = 'alert';
+      alertDiv.innerHTML = `
+        ${data.message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      messageContainer.appendChild(alertDiv);
+
       if (data.success) {
         loadLocalFiles();
         document.getElementById('folderName').value = '';
@@ -216,7 +264,7 @@ function createFolder() {
       }
     })
     .catch(error => {
-
+      console.error('Error al crear la carpeta:', error);
     });
 }
 

@@ -1,43 +1,44 @@
 <?php
 session_start();
 
+header('Content-Type: application/json');
+
 $id = $_SESSION['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['fileToUpload'])) {
-    $base_directory = "/mvmup_stor/$id";
+    $base_directory = realpath("/mvmup_stor/$id");
     $path = isset($_POST['path']) ? $_POST['path'] : '';
-    $target_dir = realpath($base_directory) . '/' . trim($path, '/');
-    
+    $target_dir = $base_directory . '/' . trim($path, '/');
+
     // Verificar que la ruta sea válida
-    if (strpos($target_dir, realpath($base_directory)) !== 0) {
-        header("Location: /pagina_almacenamiento/index.html?message=Ruta inválida&type=error");
+    if (strpos($target_dir, $base_directory) !== 0) {
+        echo json_encode(["success" => false, "message" => "Ruta inválida."]);
         exit;
     }
 
     // Crear el archivo de destino
     $target_file = $target_dir . '/' . basename($_FILES["fileToUpload"]["name"]);
-    $uploadOk = 1;
 
     // Verificar si el archivo ya existe
     if (file_exists($target_file)) {
-        header("Location: /pagina_almacenamiento/index.html?message=El archivo ya existe&type=error");
+        echo json_encode(["success" => false, "message" => "El archivo ya existe."]);
         exit;
     }
 
     // Verificar el tamaño del archivo (limite: 50MB)
     if ($_FILES["fileToUpload"]["size"] > 50 * 1024 * 1024) {
-        header("Location: /pagina_almacenamiento/index.html?message=El archivo excede el tamaño permitido&type=error");
+        echo json_encode(["success" => false, "message" => "El archivo excede el tamaño permitido (50MB)."]);
         exit;
     }
 
     // Subir el archivo
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        header("Location: /pagina_almacenamiento/index.html?message=Archivo subido con éxito&type=success");
+        echo json_encode(["success" => true, "message" => "Archivo subido con éxito."]);
         exit;
     } else {
-        header("Location: /pagina_almacenamiento/index.html?message=Error al subir el archivo&type=error");
+        echo json_encode(["success" => false, "message" => "Error al subir el archivo."]);
         exit;
     }
-    exit;
 }
+echo json_encode(["success" => false, "message" => "Solicitud inválida."]);
 ?>
