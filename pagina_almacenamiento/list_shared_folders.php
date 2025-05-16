@@ -17,9 +17,11 @@ $result = $stmt->get_result();
 $shared_items = [];
 while ($row = $result->fetch_assoc()) {
     $item_path = $row['file_path'];
+    // Quitar las dos primeras carpetas (mvmup_stor/{id_usuario})
+    $relative_path = preg_replace('#^/?mvmup_stor/[^/]+/?#', '', $item_path);
     $shared_items[] = [
         "name" => basename($item_path),
-        "path" => $item_path,
+        "path" => $relative_path,
         "is_dir" => is_dir($item_path)
     ];
 }
