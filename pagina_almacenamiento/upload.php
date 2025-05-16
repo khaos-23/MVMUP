@@ -7,6 +7,14 @@ $id = $_SESSION['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['fileToUpload'])) {
     $base_directory = realpath("/mvmup_stor/$id");
+    if (!$base_directory) {
+        // Si la carpeta del usuario no existe, créala
+        $base_directory = "/mvmup_stor/$id";
+        if (!file_exists($base_directory)) {
+            mkdir($base_directory, 0770, true);
+        }
+        $base_directory = realpath($base_directory);
+    }
     $path = isset($_POST['path']) ? $_POST['path'] : '';
     $target_dir = $base_directory . '/' . trim($path, '/');
 
