@@ -122,20 +122,31 @@ function loadSharedFiles() {
         const listItem = document.createElement('li');
         listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
 
+        let actions = '';
         if (item.is_dir) {
+          actions = `
+            <button class="btn btn-sm btn-outline-danger ms-2" title="Eliminar acceso" onclick="removeSharedAccess('${item.path}')">
+              <i class="fas fa-user-minus"></i>
+            </button>
+          `;
           listItem.innerHTML = `
             <span class="folder-name" style="cursor: pointer;" onclick="enterSharedFolder('${item.path}')">
               <i class="fas fa-folder text-warning me-2"></i>${item.name}
             </span>
+            <div>${actions}</div>
           `;
         } else {
+          actions = `
+            <a href="/pagina_almacenamiento/download.php?file=${encodeURIComponent(item.path)}" class="btn btn-sm btn-success" download>Descargar</a>
+            <button class="btn btn-sm btn-outline-danger ms-2" title="Eliminar acceso" onclick="removeSharedAccess('${item.path}')">
+              <i class="fas fa-user-minus"></i>
+            </button>
+          `;
           listItem.innerHTML = `
             <span>
               <i class="fas fa-file text-secondary me-2"></i>${item.name}
             </span>
-            <div>
-              <a href="/pagina_almacenamiento/download.php?file=${encodeURIComponent(item.path)}" class="btn btn-sm btn-success" download>Descargar</a>
-            </div>
+            <div>${actions}</div>
           `;
         }
 
@@ -545,3 +556,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
+function removeSharedAccess(filePath) {
+  if (!confirm('¿Seguro que quieres eliminar tu acceso a este archivo o carpeta compartida?')) return;
+  fetch('/pagina_almacenamiento/remove_shared_access.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ file: filePath })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showUploadNotification('Acceso eliminado correctamente.', true);
+        loadSharedFiles();
+      } else {
+        showUploadNotification(data.error || 'Error al eliminar el acceso.', false);
+      }
+    })
+    .catch(() => {
+      showUploadNotification('Error al eliminar el acceso.', false);
+    });
+}

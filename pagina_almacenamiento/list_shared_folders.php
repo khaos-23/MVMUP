@@ -20,7 +20,8 @@ while ($row = $result->fetch_assoc()) {
     $shared_items[] = [
         "name" => basename($item_path),
         "path" => $item_path,
-        "is_dir" => is_dir($item_path)
+        "is_dir" => is_dir($item_path),
+        "shared_id" => $user_id // Añadido para identificar el usuario que tiene acceso
     ];
 }
 
