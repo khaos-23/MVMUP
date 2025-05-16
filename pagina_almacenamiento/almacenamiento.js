@@ -198,12 +198,7 @@ function confirmShare() {
 
 
 function deleteFile(filePath) {
-  // Mostrar modal de confirmación
-  const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-  const confirmBtn = document.getElementById('confirmDeleteBtn');
-  // Elimina listeners anteriores
-  confirmBtn.onclick = null;
-  confirmBtn.onclick = function () {
+  if (confirm('¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.')) {
     fetch('/pagina_almacenamiento/delete_file.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -217,15 +212,12 @@ function deleteFile(filePath) {
         } else {
           showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
         }
-        deleteModal.hide();
       })
       .catch(error => {
         showUploadNotification('Error al eliminar el archivo o carpeta.', false);
         console.error('Error al eliminar el archivo o carpeta:', error);
-        deleteModal.hide();
       });
-  };
-  deleteModal.show();
+  }
 }
 
 function createFolder() {
