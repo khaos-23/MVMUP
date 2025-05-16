@@ -3,6 +3,11 @@ session_start();
 
 require_once "../conexion.php";
 
+function redirectWithMessage($success, $message) {
+    header("Location: index.html?login=" . ($success ? "success" : "error") . "&msg=" . urlencode($message));
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -26,16 +31,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (!file_exists($user_folder)) {
                 if (!mkdir($user_folder, 0777, true)) {
-                    exit;
+                    redirectWithMessage(false, "Error al crear la carpeta del usuario.");
                 } 
             }
 
-            header('Location: /index.html');
+            redirectWithMessage(true, "Sesión iniciada correctamente.");
         } else {
-            echo "Contraseña incorrecta.";
+            redirectWithMessage(false, "Contraseña incorrecta.");
         }
     } else {
-        echo "Usuario no encontrado.";
+        redirectWithMessage(false, "Usuario no encontrado.");
     }
     $stmt->close();
 }
