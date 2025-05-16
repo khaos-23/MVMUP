@@ -3,7 +3,7 @@ let showingSharedFiles = false;
 let sharedPathStack = []; 
 let itemToSharePath = null;
 let itemToShareIsFolder = null;
-let fileToDeletePath = null; // Nuevo: almacena el archivo/carpeta a eliminar
+let fileToDeletePath = null; // Nuevo: para guardar el archivo a eliminar
 
 document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
@@ -198,12 +198,14 @@ function confirmShare() {
 }
 
 
-function showDeleteConfirmModal(filePath) {
+function deleteFile(filePath) {
   fileToDeletePath = filePath;
+  // Mostrar modal personalizado
   const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
   deleteModal.show();
 }
 
+// Nueva función: llamada al confirmar en el modal
 function confirmDelete() {
   if (!fileToDeletePath) return;
   fetch('/pagina_almacenamiento/delete_file.php', {
@@ -220,21 +222,17 @@ function confirmDelete() {
         showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
       }
       fileToDeletePath = null;
+      // Cerrar modal
       const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
       if (deleteModal) deleteModal.hide();
     })
     .catch(error => {
       showUploadNotification('Error al eliminar el archivo o carpeta.', false);
-      console.error('Error al eliminar el archivo o carpeta:', error);
       fileToDeletePath = null;
       const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
       if (deleteModal) deleteModal.hide();
+      console.error('Error al eliminar el archivo o carpeta:', error);
     });
-}
-
-// Modifica la función deleteFile para usar el modal personalizado
-function deleteFile(filePath) {
-  showDeleteConfirmModal(filePath);
 }
 
 function createFolder() {
@@ -444,11 +442,5 @@ document.addEventListener('DOMContentLoaded', function () {
         showUploadNotification('Error al subir el archivo.', false);
       });
     });
-  }
-
-  // Asocia el botón de confirmación del modal a confirmDelete
-  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', confirmDelete);
   }
 });
