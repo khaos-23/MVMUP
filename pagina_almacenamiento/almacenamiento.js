@@ -278,7 +278,7 @@ function createFolder() {
     body: JSON.stringify({ folder: currentPath + '/' + folderName })
   })
     .then(response => response.json())
-    .then data => {
+    .then(data => {
       if (data.success) {
         loadLocalFiles();
         showUploadNotification(data.message || 'Carpeta creada con éxito', true);
