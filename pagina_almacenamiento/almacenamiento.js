@@ -442,19 +442,23 @@ function updateSharedBreadcrumb() {
     // Tomar la ruta actual
     const currentSharedPath = sharedPathStack[sharedPathStack.length - 1];
     const parts = currentSharedPath.split('/').filter(Boolean);
+
+    // Ocultar las dos primeras carpetas (mvmup_stor/{id_usuario})
+    const visibleParts = parts.slice(2);
+
     // Mostrar todas menos las dos últimas
-    const showParts = parts.length > 2 ? parts.slice(0, -2) : [];
-    let accumulatedPath = '';
+    const showParts = visibleParts.length > 2 ? visibleParts.slice(0, -2) : [];
+    let accumulatedPath = parts.slice(0, 2).join('/'); // Empieza con las dos ocultas para reconstruir la ruta
+
     showParts.forEach((part, index) => {
       accumulatedPath += '/' + part;
       sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
     });
-    if (parts.length > 2) {
+    if (visibleParts.length > 2) {
       sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item">...</li>`;
     }
     // Mostrar las dos últimas (o menos si no hay tantas)
-    const lastParts = parts.slice(-2);
-    accumulatedPath = showParts.reduce((acc, part) => acc + '/' + part, '');
+    const lastParts = visibleParts.slice(-2);
     lastParts.forEach((part, idx) => {
       accumulatedPath += '/' + part;
       if (idx === lastParts.length - 1) {
