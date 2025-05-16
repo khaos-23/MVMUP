@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
   const localFilesContainer = document.getElementById('localFilesContainer');
   const sharedFilesContainer = document.getElementById('sharedFilesContainer');
+  const breadcrumbContainer = document.getElementById('breadcrumbContainer'); // Añadido
 
- 
   toggleViewBtn.addEventListener('click', function () {
     showingSharedFiles = !showingSharedFiles;
 
@@ -20,11 +20,13 @@ document.addEventListener('DOMContentLoaded', function () {
       localFilesContainer.style.display = 'none';
       sharedFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Locales';
+      if (breadcrumbContainer) breadcrumbContainer.style.display = 'none'; // Oculta breadcrumb
       loadSharedFiles();
     } else {
       sharedFilesContainer.style.display = 'none';
       localFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Compartidos';
+      if (breadcrumbContainer) breadcrumbContainer.style.display = 'block'; // Muestra breadcrumb
       loadLocalFiles();
     }
   });
