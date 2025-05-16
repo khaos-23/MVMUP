@@ -146,18 +146,6 @@ function enterFolder(folderPath) {
 }
 
 
-function goBack() {
-  if (currentPath) {
-    const pathParts = currentPath.split('/').filter(Boolean);
-    pathParts.pop(); 
-    currentPath = pathParts.join('/');
-    loadLocalFiles();
-    document.getElementById('uploadPath').value = currentPath; 
-    updateBreadcrumb(currentPath);
-  }
-}
-
-
 function shareItem(itemPath, isFolder) {
   itemToSharePath = itemPath;
   itemToShareIsFolder = isFolder;
@@ -214,7 +202,7 @@ function showDeleteConfirmModal(filePath) {
             <p>¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.</p>
           </div>
           <div class="modal-footer">
-            <button type="button" id="cancelDeleteBtn" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #6c757d; border-color: #6c757d;">Cancelar</button>
+            <button type="button" id="cancelDeleteBtn" class="btn btn-danger">Cancelar</button>
             <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
           </div>
         </div>
