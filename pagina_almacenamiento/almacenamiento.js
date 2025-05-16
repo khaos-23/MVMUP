@@ -267,7 +267,7 @@ function createFolder() {
     body: JSON.stringify({ folder: currentPath + '/' + folderName })
   })
     .then(response => response.json())
-    .then(data => {
+    .then data => {
       if (data.success) {
         loadLocalFiles();
         showUploadNotification(data.message || 'Carpeta creada con éxito', true);
@@ -376,7 +376,12 @@ function goBackSharedFolder() {
 
 function updateBreadcrumb(path) {
   const breadcrumb = document.getElementById('breadcrumb');
-  breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRoot()">Inicio</a></li>';
+  // Cambia el onclick del enlace "Inicio" según la vista actual
+  if (showingSharedFiles) {
+    breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRootShared()">Inicio</a></li>';
+  } else {
+    breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRootLocal()">Inicio</a></li>';
+  }
 
   if (path) {
     const parts = path.split('/').filter(Boolean);
@@ -393,10 +398,18 @@ function updateBreadcrumb(path) {
   }
 }
 
-function navigateToRoot() {
+// Nueva función para navegar al inicio de archivos locales
+function navigateToRootLocal() {
   currentPath = '';
   loadLocalFiles();
   updateBreadcrumb(currentPath);
+}
+
+// Nueva función para navegar al inicio de archivos compartidos
+function navigateToRootShared() {
+  sharedPathStack = [];
+  loadSharedFiles();
+  updateBreadcrumb('');
 }
 
 // Notificación de subida
