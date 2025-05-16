@@ -20,13 +20,20 @@ document.addEventListener('DOMContentLoaded', function () {
       localFilesContainer.style.display = 'none';
       sharedFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Locales';
-      if (breadcrumbContainer) breadcrumbContainer.style.display = 'none'; // Oculta breadcrumb
+      if (breadcrumbContainer) breadcrumbContainer.style.display = 'none'; // Oculta breadcrumb local
+      // Mostrar breadcrumb compartido
+      const sharedBreadcrumbContainer = document.getElementById('sharedBreadcrumbContainer');
+      if (sharedBreadcrumbContainer) sharedBreadcrumbContainer.style.display = 'block';
       loadSharedFiles();
+      updateSharedBreadcrumb(); // Inicializa breadcrumb compartido
     } else {
       sharedFilesContainer.style.display = 'none';
       localFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Compartidos';
-      if (breadcrumbContainer) breadcrumbContainer.style.display = 'block'; // Muestra breadcrumb
+      if (breadcrumbContainer) breadcrumbContainer.style.display = 'block'; // Muestra breadcrumb local
+      // Oculta breadcrumb compartido
+      const sharedBreadcrumbContainer = document.getElementById('sharedBreadcrumbContainer');
+      if (sharedBreadcrumbContainer) sharedBreadcrumbContainer.style.display = 'none';
       loadLocalFiles();
     }
   });
@@ -98,6 +105,8 @@ function loadLocalFiles() {
 
 
 function loadSharedFiles() {
+  sharedPathStack = []; // Reinicia el stack al cargar raíz
+  updateSharedBreadcrumb();
   fetch('/pagina_almacenamiento/list_shared_folders.php')
     .then(response => response.json())
     .then(items => {
@@ -269,7 +278,7 @@ function createFolder() {
     body: JSON.stringify({ folder: currentPath + '/' + folderName })
   })
     .then(response => response.json())
-    .then(data => {
+    .then data => {
       if (data.success) {
         loadLocalFiles();
         showUploadNotification(data.message || 'Carpeta creada con éxito', true);
@@ -320,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function enterSharedFolder(folderPath) {
   sharedPathStack.push(folderPath); 
+  updateSharedBreadcrumb();
   fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(folderPath)}`)
     .then(response => response.json())
     .then(files => {
@@ -414,6 +424,69 @@ function navigateToRoot() {
   currentPath = '';
   loadLocalFiles();
   updateLocalBreadcrumb(currentPath);
+}
+
+// NUEVO: Breadcrumb para archivos compartidos
+function updateSharedBreadcrumb() {
+  const sharedBreadcrumbContainer = document.getElementById('sharedBreadcrumbContainer');
+  if (!showingSharedFiles) {
+    if (sharedBreadcrumbContainer) sharedBreadcrumbContainer.style.display = 'none';
+    return;
+  }
+  if (sharedBreadcrumbContainer) sharedBreadcrumbContainer.style.display = 'block';
+
+  const sharedBreadcrumb = document.getElementById('sharedBreadcrumb');
+  sharedBreadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToSharedRoot()">Inicio</a></li>';
+
+  if (sharedPathStack.length > 0) {
+    // Tomar la ruta actual
+    const currentSharedPath = sharedPathStack[sharedPathStack.length - 1];
+    const parts = currentSharedPath.split('/').filter(Boolean);
+    // Mostrar todas menos las dos últimas
+    const showParts = parts.length > 2 ? parts.slice(0, -2) : [];
+    let accumulatedPath = '';
+    showParts.forEach((part, index) => {
+      accumulatedPath += '/' + part;
+      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
+    });
+    if (parts.length > 2) {
+      sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item">...</li>`;
+    }
+    // Mostrar las dos últimas (o menos si no hay tantas)
+    const lastParts = parts.slice(-2);
+    accumulatedPath = showParts.reduce((acc, part) => acc + '/' + part, '');
+    lastParts.forEach((part, idx) => {
+      accumulatedPath += '/' + part;
+      if (idx === lastParts.length - 1) {
+        sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
+      } else {
+        sharedBreadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="goToSharedBreadcrumb('${accumulatedPath}')">${part}</a></li>`;
+      }
+    });
+  }
+}
+
+// Ir a raíz de compartidos
+function navigateToSharedRoot() {
+  sharedPathStack = [];
+  loadSharedFiles();
+  updateSharedBreadcrumb();
+}
+
+// Navegar a una carpeta específica desde el breadcrumb compartido
+function goToSharedBreadcrumb(targetPath) {
+  // Encuentra el índice de la ruta en el stack
+  let idx = -1;
+  for (let i = 0; i < sharedPathStack.length; i++) {
+    if (sharedPathStack[i] === targetPath) {
+      idx = i;
+      break;
+    }
+  }
+  if (idx !== -1) {
+    sharedPathStack = sharedPathStack.slice(0, idx + 1);
+    enterSharedFolder(targetPath);
+  }
 }
 
 // Notificación de subida
