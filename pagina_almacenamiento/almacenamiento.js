@@ -208,7 +208,7 @@ function deleteFile(filePath) {
       .then(data => {
         if (data.success) {
           loadLocalFiles();
-          showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
+          showDeleteConfirmation('Archivo o carpeta eliminado exitosamente.');
         } else {
           showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
         }
@@ -218,6 +218,40 @@ function deleteFile(filePath) {
         console.error('Error al eliminar el archivo o carpeta:', error);
       });
   }
+}
+
+// Confirmación visual de eliminación
+function showDeleteConfirmation(message) {
+  const notif = document.getElementById('uploadNotification');
+  notif.textContent = message;
+  notif.style.display = 'block';
+  notif.style.background = '#198754';
+  notif.style.color = '#fff';
+  notif.style.border = '1px solid #198754';
+  notif.style.left = '20px';
+  notif.style.top = '80px';
+  notif.style.position = 'fixed';
+  notif.style.zIndex = 9999;
+  notif.style.padding = '10px 20px';
+  notif.style.borderRadius = '8px';
+  notif.style.minWidth = '180px';
+  notif.style.maxWidth = '300px';
+  notif.style.fontSize = '0.95rem';
+  notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+  notif.style.transition = 'transform 0.3s, opacity 0.3s';
+  notif.style.transform = 'translateX(-120%)';
+  notif.style.opacity = '0.95';
+
+  setTimeout(() => {
+    notif.style.transform = 'translateX(0)';
+    notif.style.opacity = '1';
+  }, 10);
+
+  setTimeout(() => {
+    notif.style.transform = 'translateX(-120%)';
+    notif.style.opacity = '0.95';
+    setTimeout(() => { notif.style.display = 'none'; }, 350);
+  }, 2500);
 }
 
 function createFolder() {
