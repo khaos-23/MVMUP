@@ -16,8 +16,8 @@ if (isset($data['folder'])) {
     }
 
     if (!file_exists($folder)) {
-        mkdir ($folder, 0777, true);
-        if (true) {
+        
+        if (mkdir ($folder, 0770, true)) {
             header("Location: /pagina_almacenamiento/index.html?message=Carpeta creada con éxito.&type=success");  
            
         } else {
