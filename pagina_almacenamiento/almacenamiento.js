@@ -215,7 +215,7 @@ function showDeleteConfirmModal(filePath) {
           </div>
           <div class="modal-footer">
             <button type="button" id="cancelDeleteBtn" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #6c757d; border-color: #6c757d;">Cancelar</button>
-            <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+            <button type="button" id="confirmDeleteBtn" style="background-color: #dc3545; border: none; color: #fff; border-radius: 8px; padding: 8px 24px; font-weight: 500;">Eliminar</button>
           </div>
         </div>
       </div>
@@ -279,7 +279,7 @@ function createFolder() {
     body: JSON.stringify({ folder: currentPath + '/' + folderName })
   })
     .then(response => response.json())
-    .then(data => {
+    .then data => {
       if (data.success) {
         loadLocalFiles();
         showUploadNotification(data.message || 'Carpeta creada con éxito', true);
