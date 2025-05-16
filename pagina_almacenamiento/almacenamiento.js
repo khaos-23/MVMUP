@@ -331,3 +331,68 @@ function navigateToRoot() {
   loadLocalFiles();
   updateBreadcrumb(currentPath);
 }
+
+// Notificación de subida
+function showUploadNotification(message, success = true) {
+  const notif = document.getElementById('uploadNotification');
+  notif.textContent = message;
+  notif.style.display = 'block';
+  notif.style.background = success ? '#198754' : '#dc3545';
+  notif.style.color = '#fff';
+  notif.style.border = '1px solid ' + (success ? '#198754' : '#dc3545');
+  notif.style.left = '20px';
+  notif.style.top = '80px';
+  notif.style.position = 'fixed';
+  notif.style.zIndex = 9999;
+  notif.style.padding = '10px 20px';
+  notif.style.borderRadius = '8px';
+  notif.style.minWidth = '180px';
+  notif.style.maxWidth = '300px';
+  notif.style.fontSize = '0.95rem';
+  notif.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+  notif.style.transition = 'transform 0.3s, opacity 0.3s';
+  notif.style.transform = 'translateX(-120%)';
+  notif.style.opacity = '0.95';
+
+  setTimeout(() => {
+    notif.style.transform = 'translateX(0)';
+    notif.style.opacity = '1';
+  }, 10);
+
+  setTimeout(() => {
+    notif.style.transform = 'translateX(-120%)';
+    notif.style.opacity = '0.95';
+    setTimeout(() => { notif.style.display = 'none'; }, 350);
+  }, 2500);
+}
+
+// Interceptar el formulario de subida
+document.addEventListener('DOMContentLoaded', function () {
+  const uploadForm = document.getElementById('uploadForm');
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(uploadForm);
+      fetch('/pagina_almacenamiento/upload.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showUploadNotification(data.message || 'Archivo subido correctamente.', true);
+          loadLocalFiles();
+        } else {
+          showUploadNotification(data.message || 'Error al subir el archivo.', false);
+        }
+        // Cerrar modal si existe
+        const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+        if (modal) modal.hide();
+        uploadForm.reset();
+      })
+      .catch(() => {
+        showUploadNotification('Error al subir el archivo.', false);
+      });
+    });
+  }
+});
