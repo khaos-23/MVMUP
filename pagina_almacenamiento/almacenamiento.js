@@ -7,12 +7,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const localFilesContainer = document.getElementById('localFilesContainer');
   const sharedFilesContainer = document.getElementById('sharedFilesContainer');
 
- 
+  // Mostrar archivos locales por defecto
+  loadLocalFiles();
+
   toggleViewBtn.addEventListener('click', function () {
     showingSharedFiles = !showingSharedFiles;
 
     if (showingSharedFiles) {
-      
       localFilesContainer.style.display = 'none';
       sharedFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Locales';

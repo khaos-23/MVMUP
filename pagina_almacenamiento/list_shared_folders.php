@@ -8,7 +8,6 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-
 $stmt = $conn->prepare("SELECT file_path FROM shared_files WHERE shared_with_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
