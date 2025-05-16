@@ -164,9 +164,16 @@ function shareItem(itemPath, isFolder) {
   })
     .then(response => response.json())
     .then(data => {
-      alert(data.message || 'Elemento compartido con éxito.');
+      if (data.success) {
+        showUploadNotification(data.message || 'Elemento compartido con éxito.', true);
+      } else {
+        showUploadNotification(data.message || 'Error al compartir el elemento.', false);
+      }
     })
-    .catch(error => console.error('Error al compartir el elemento:', error));
+    .catch(error => {
+      showUploadNotification('Error al compartir el elemento.', false);
+      console.error('Error al compartir el elemento:', error);
+    });
 }
 
 
