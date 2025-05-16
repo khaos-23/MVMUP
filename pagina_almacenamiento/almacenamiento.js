@@ -180,13 +180,16 @@ function deleteFile(filePath) {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          loadLocalFiles(); 
-          alert('Archivo o carpeta eliminados con éxito.');
+          loadLocalFiles();
+          showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
         } else {
-          alert(data.error || 'Error al eliminar el archivo o carpeta.');
+          showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
         }
       })
-      .catch(error => console.error('Error al eliminar el archivo o carpeta:', error));
+      .catch(error => {
+        showUploadNotification('Error al eliminar el archivo o carpeta.', false);
+        console.error('Error al eliminar el archivo o carpeta:', error);
+      });
   }
 }
 
