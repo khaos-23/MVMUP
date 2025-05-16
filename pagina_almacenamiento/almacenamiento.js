@@ -4,6 +4,10 @@ let sharedPathStack = [];
 let itemToSharePath = null;
 let itemToShareIsFolder = null;
 
+// Variables para el modal de eliminación
+let fileToDeletePath = null;
+let fileToDeleteName = null;
+
 document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
   const localFilesContainer = document.getElementById('localFilesContainer');
@@ -198,26 +202,40 @@ function confirmShare() {
 
 
 function deleteFile(filePath) {
-  if (confirm('¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.')) {
-    fetch('/pagina_almacenamiento/delete_file.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ file: filePath })
+  showDeleteModal(filePath);
+}
+
+// Función que se llama al confirmar la eliminación en el modal
+function confirmDelete() {
+  if (!fileToDeletePath) return;
+  fetch('/pagina_almacenamiento/delete_file.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ file: fileToDeletePath })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        loadLocalFiles();
+        showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
+      } else {
+        showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
+      }
+      // Cerrar modal
+      const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+      if (deleteModal) deleteModal.hide();
+      fileToDeletePath = null;
+      fileToDeleteName = null;
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          loadLocalFiles();
-          showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
-        } else {
-          showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
-        }
-      })
-      .catch(error => {
-        showUploadNotification('Error al eliminar el archivo o carpeta.', false);
-        console.error('Error al eliminar el archivo o carpeta:', error);
-      });
-  }
+    .catch(error => {
+      showUploadNotification('Error al eliminar el archivo o carpeta.', false);
+      console.error('Error al eliminar el archivo o carpeta:', error);
+      // Cerrar modal
+      const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+      if (deleteModal) deleteModal.hide();
+      fileToDeletePath = null;
+      fileToDeleteName = null;
+    });
 }
 
 function createFolder() {
@@ -429,3 +447,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+
+// Función para mostrar el modal de confirmación de eliminación
+function showDeleteModal(filePath) {
+  fileToDeletePath = filePath;
+  // Extraer solo el nombre del archivo/carpeta
+  fileToDeleteName = filePath.split('/').filter(Boolean).pop();
+  document.getElementById('deleteFileName').textContent = fileToDeleteName;
+  const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+  deleteModal.show();
+}

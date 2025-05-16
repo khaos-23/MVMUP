@@ -135,6 +135,26 @@
       </div>
   </div>  
 
+  <!-- Eliminar -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="deleteModalLabel">Eliminar archivo o carpeta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Seguro que quiere eliminar el archivo o carpeta <strong id="deleteFileName"></strong>?<br>
+          <span class="text-danger">Esta decisión no se puede rehacer.</span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No eliminar</button>
+          <button type="button" class="btn btn-danger" onclick="confirmDelete()">Eliminar definitivamente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!--Footer-->
   <footer class="bg-dark text-white py-3 mt-auto">
     <div class="container d-flex flex-wrap justify-content-between">
