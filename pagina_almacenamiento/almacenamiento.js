@@ -154,8 +154,26 @@ function goBack() {
 
 
 function shareItem(itemPath, isFolder) {
-  const recipient = prompt('Introduce el email del destinatario:');
-  if (!recipient) return;
+  // Guardar la ruta y tipo en campos ocultos del modal
+  document.getElementById('sharePath').value = itemPath;
+  document.getElementById('recipientEmail').value = '';
+  // Guardar si es carpeta (por si lo necesitas en el backend)
+  document.getElementById('sharePath').dataset.isFolder = isFolder ? '1' : '0';
+  // Mostrar el modal
+  const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+  modal.show();
+}
+
+// Nueva función para confirmar el compartir desde el modal
+function confirmShare() {
+  const recipient = document.getElementById('recipientEmail').value.trim();
+  const itemPath = document.getElementById('sharePath').value;
+  const isFolder = document.getElementById('sharePath').dataset.isFolder === '1';
+
+  if (!recipient) {
+    showUploadNotification('Por favor, introduce el email del destinatario.', false);
+    return;
+  }
 
   fetch('/pagina_almacenamiento/share_file.php', {
     method: 'POST',
@@ -169,10 +187,15 @@ function shareItem(itemPath, isFolder) {
       } else {
         showUploadNotification(data.message || 'Error al compartir el elemento.', false);
       }
+      // Cerrar modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
+      if (modal) modal.hide();
     })
     .catch(error => {
       showUploadNotification('Error al compartir el elemento.', false);
       console.error('Error al compartir el elemento:', error);
+      const modal = bootstrap.Modal.getInstance(document.getElementById('shareModal'));
+      if (modal) modal.hide();
     });
 }
 
