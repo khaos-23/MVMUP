@@ -4,6 +4,9 @@ let sharedPathStack = [];
 let itemToSharePath = null;
 let itemToShareIsFolder = null;
 
+// Añade variables globales para el modal de confirmación
+let fileToDeletePath = null;
+
 document.addEventListener('DOMContentLoaded', function () {
   const toggleViewBtn = document.getElementById('toggleViewBtn');
   const localFilesContainer = document.getElementById('localFilesContainer');
@@ -197,27 +200,70 @@ function confirmShare() {
 }
 
 
-function deleteFile(filePath) {
-  if (confirm('¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.')) {
-    fetch('/pagina_almacenamiento/delete_file.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ file: filePath })
+function showDeleteConfirmModal(filePath) {
+  fileToDeletePath = filePath;
+  const modalHtml = `
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar eliminación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que quieres eliminar este archivo o carpeta? Todo su contenido será eliminado.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="cancelDeleteBtn" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #6c757d; border-color: #6c757d;">Cancelar</button>
+            <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  // Elimina cualquier modal previo
+  let existingModal = document.getElementById('deleteConfirmModal');
+  if (existingModal) existingModal.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+  deleteConfirmModal.show();
+
+  document.getElementById('confirmDeleteBtn').onclick = function () {
+    actuallyDeleteFile();
+    deleteConfirmModal.hide();
+  };
+  document.getElementById('cancelDeleteBtn').onclick = function () {
+    fileToDeletePath = null;
+  };
+}
+
+function actuallyDeleteFile() {
+  if (!fileToDeletePath) return;
+  fetch('/pagina_almacenamiento/delete_file.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ file: fileToDeletePath })
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        loadLocalFiles();
+        showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
+      } else {
+        showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
+      }
+      fileToDeletePath = null;
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          loadLocalFiles();
-          showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
-        } else {
-          showUploadNotification(data.error || 'Error al eliminar el archivo o carpeta.', false);
-        }
-      })
-      .catch(error => {
-        showUploadNotification('Error al eliminar el archivo o carpeta.', false);
-        console.error('Error al eliminar el archivo o carpeta:', error);
-      });
-  }
+    .catch(error => {
+      showUploadNotification('Error al eliminar el archivo o carpeta.', false);
+      console.error('Error al eliminar el archivo o carpeta:', error);
+      fileToDeletePath = null;
+    });
+}
+
+function deleteFile(filePath) {
+  showDeleteConfirmModal(filePath);
 }
 
 function createFolder() {
