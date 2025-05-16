@@ -43,7 +43,9 @@
         <div id="breadcrumbContainer" class="mb-3">
         <nav aria-label="breadcrumb">
           <ol id="breadcrumb" class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#" onclick="loadLocalFiles()">Inicio</a></li>
+            <li class="breadcrumb-item">
+              <a href="#" onclick="showingSharedFiles ? loadSharedFiles() : loadLocalFiles()">Inicio</a>
+            </li>
           </ol>
         </nav>
       </div>

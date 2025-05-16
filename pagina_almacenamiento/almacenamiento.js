@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     showingSharedFiles = !showingSharedFiles;
 
     if (showingSharedFiles) {
+      
       localFilesContainer.style.display = 'none';
       sharedFilesContainer.style.display = 'block';
       toggleViewBtn.textContent = 'Ver Archivos Locales';
