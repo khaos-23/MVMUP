@@ -49,7 +49,7 @@ function loadLocalFiles() {
   fetch(`/pagina_almacenamiento/list_files.php?path=${encodeURIComponent(currentPath)}`)
     .then(response => response.json())
     .then(files => {
-      updateBreadcrumb(currentPath);
+      updateLocalBreadcrumb(currentPath); // Cambiado a nueva función
       const localFileList = document.getElementById('localFileList');
       localFileList.innerHTML = '';
 
@@ -142,7 +142,7 @@ function enterFolder(folderPath) {
   currentPath = folderPath;
   loadLocalFiles();
   document.getElementById('uploadPath').value = currentPath; 
-  updateBreadcrumb(currentPath);
+  updateLocalBreadcrumb(currentPath);
 }
 
 
@@ -374,17 +374,32 @@ function goBackSharedFolder() {
   }
 }
 
-function updateBreadcrumb(path) {
+// NUEVA FUNCIÓN: Breadcrumb solo para archivos locales, mostrando todas las carpetas menos las dos últimas
+function updateLocalBreadcrumb(path) {
+  const breadcrumbContainer = document.getElementById('breadcrumbContainer');
+  breadcrumbContainer.style.display = showingSharedFiles ? 'none' : 'block'; // Solo mostrar en locales
+
   const breadcrumb = document.getElementById('breadcrumb');
   breadcrumb.innerHTML = '<li class="breadcrumb-item"><a href="#" onclick="navigateToRoot()">Inicio</a></li>';
 
   if (path) {
     const parts = path.split('/').filter(Boolean);
+    // Mostrar todas menos las dos últimas
+    const showParts = parts.length > 2 ? parts.slice(0, -2) : [];
     let accumulatedPath = '';
-
-    parts.forEach((part, index) => {
+    showParts.forEach((part, index) => {
       accumulatedPath += '/' + part;
-      if (index === parts.length - 1) {
+      breadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="enterFolder('${accumulatedPath}')">${part}</a></li>`;
+    });
+    // Si hay partes y no se muestran todas, poner "..." para indicar que hay más
+    if (parts.length > 2) {
+      breadcrumb.innerHTML += `<li class="breadcrumb-item">...</li>`;
+    }
+    // Mostrar las dos últimas (o menos si no hay tantas)
+    const lastParts = parts.slice(-2);
+    lastParts.forEach((part, idx) => {
+      accumulatedPath += '/' + part;
+      if (idx === lastParts.length - 1) {
         breadcrumb.innerHTML += `<li class="breadcrumb-item active" aria-current="page">${part}</li>`;
       } else {
         breadcrumb.innerHTML += `<li class="breadcrumb-item"><a href="#" onclick="enterFolder('${accumulatedPath}')">${part}</a></li>`;
@@ -396,7 +411,7 @@ function updateBreadcrumb(path) {
 function navigateToRoot() {
   currentPath = '';
   loadLocalFiles();
-  updateBreadcrumb(currentPath);
+  updateLocalBreadcrumb(currentPath);
 }
 
 // Notificación de subida
