@@ -164,13 +164,9 @@ function shareItem(itemPath, isFolder) {
   })
     .then(response => response.json())
     .then(data => {
-      // Cambiado alert por notificación
-      showUploadNotification(data.message || 'Elemento compartido con éxito.', !data.message || data.message.toLowerCase().includes('éxito'));
+      alert(data.message || 'Elemento compartido con éxito.');
     })
-    .catch(error => {
-      showUploadNotification('Error al compartir el elemento.', false);
-      console.error('Error al compartir el elemento:', error);
-    });
+    .catch(error => console.error('Error al compartir el elemento:', error));
 }
 
 
@@ -182,7 +178,7 @@ function deleteFile(filePath) {
       body: JSON.stringify({ file: filePath })
     })
       .then(response => response.json())
-      .then data => {
+      .then(data => {
         if (data.success) {
           loadLocalFiles();
           showUploadNotification('Archivo o carpeta eliminados con éxito.', true);
