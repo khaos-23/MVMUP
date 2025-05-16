@@ -1,6 +1,0 @@
-ruta en archivos compartido
-
-mensaje de creacion de carpeta
-10=2,5
-5=1,25
-20=5
