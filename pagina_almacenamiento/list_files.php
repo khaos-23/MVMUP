@@ -2,6 +2,11 @@
 session_start();
 require_once "../conexion.php"; 
 
+if (!isset($_SESSION['id'])) {
+    echo json_encode(['error' => 'Usuario no autenticado.']);
+    exit;
+}
+
 $id = $_SESSION['id'];
 $base_directory = realpath("/mvmup_stor/$id");
 $path = isset($_GET['path']) ? $_GET['path'] : '';
