@@ -328,7 +328,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function enterSharedFolder(folderPath) {
-  sharedPathStack.push(folderPath); 
+  // Si ya estamos en la carpeta, no la añadimos de nuevo al stack
+  if (sharedPathStack.length === 0 || sharedPathStack[sharedPathStack.length - 1] !== folderPath) {
+    sharedPathStack.push(folderPath);
+  }
   updateSharedBreadcrumb();
   fetch(`/pagina_almacenamiento/list_shared_files.php?path=${encodeURIComponent(folderPath)}`)
     .then(response => response.json())
